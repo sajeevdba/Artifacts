@@ -1,4 +1,7 @@
 // Small promise wrapper around the solver worker.
+// Inlined so the app also works as a single self-contained page.
+import SolverWorker from '../solver.worker.js?worker&inline'
+
 let worker
 let readyPromise
 let nextId = 1
@@ -6,7 +9,7 @@ const pending = new Map()
 
 function getWorker() {
   if (!worker) {
-    worker = new Worker(new URL('../solver.worker.js', import.meta.url), { type: 'module' })
+    worker = new SolverWorker()
     readyPromise = new Promise((resolve) => {
       worker.addEventListener('message', (e) => {
         const m = e.data

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Camera from './components/Camera.jsx'
 import CubeView from './components/CubeView.jsx'
 import { FaceGrid, Palette } from './components/FaceGrid.jsx'
@@ -94,7 +94,6 @@ function Scan({ index, faces, setFaces, calib, onNext, onBack, onJump }) {
 
   const grid = faces[step.face]
   const setGrid = (g) => setFaces((f) => ({ ...f, [step.face]: g }))
-  const handleUnavailable = useCallback((msg) => setNoCamera(msg), [])
 
   const showGrid = captured || noCamera
   const complete = grid.every(Boolean)
@@ -122,15 +121,19 @@ function Scan({ index, faces, setFaces, calib, onNext, onBack, onJump }) {
         </div>
 
         {!showGrid && (
-          <Camera
-            calib={calib}
-            onUnavailable={handleUnavailable}
-            onCapture={(raw, ids) => {
-              rawRef.current = raw
-              setGrid(ids)
-              setCaptured(true)
-            }}
-          />
+          <>
+            <Camera
+              calib={calib}
+              onCapture={(raw, ids) => {
+                rawRef.current = raw
+                setGrid(ids)
+                setCaptured(true)
+              }}
+            />
+            <button type="button" className="text-sm font-semibold text-white/80 underline underline-offset-4" onClick={() => setNoCamera('Tap each square and pick its color.')}>
+              Enter the colors by hand instead
+            </button>
+          </>
         )}
 
         {showGrid && (
